@@ -3,16 +3,22 @@
  * Copyright 2019 Google LLC. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-// This example creates a rectangle based on the viewport
-// on any 'zoom-changed' event.
+/*
+Description:
+Creates a rectangle on right-click + button-click generates 100 random markers inside rectangle
+
+*/
 
 var tempControlUI;
+let map;
+var latMarker, lngMarker;
 
 
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
+	const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
-    const map = new google.maps.Map(document.getElementById("map"), {
+    map = new Map(document.getElementById("map"), {
         zoom: 1,
         center: {
             lat: 0,
@@ -26,9 +32,9 @@ async function initMap() {
 
     //Create "Show rect bounds" control button at top center of map
     var newPopupControlDiv = document.createElement("div");
-    tempControlUI = createControl(newPopupControlDiv, "Shows rectangle bounds", "Show rect bounds", "5px", "25px");
+    tempControlUI = createControl(newPopupControlDiv, "Gnerates random markers inside rectangle", "Generate", "5px", "25px");
     tempControlUI.addEventListener("click", () => {
-        showRectBounds(rectangle);
+        generateRandomLocInRect(rectangle);
     });
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(newPopupControlDiv);
 
@@ -86,9 +92,45 @@ function createControl(controlDiv, desc, content, bSize, fSize) {
     return controlUI;
 }
 
-async function showRectBounds(rect) {
-    const { Map } = await google.maps.importLibrary("maps");
+async function generateRandomLocInRect(rect) {
 	
+	const { Map } = await google.maps.importLibrary("maps");
+	const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+	
+
+	
+	console.log("Start:");
+	
+	//Generate 100 random markers inside rectangle
+	for (let iCount = 0; iCount < 100; iCount++) {
+		latMarker = getRandomLatBetween(rect.bounds.getSouthWest().lat(), rect.bounds.getNorthEast().lat());
+		lngMarker = getRandomLngBetween(rect.bounds.getNorthEast().lng(), rect.bounds.getSouthWest().lng());
+		
+		console.log(iCount + ":");
+		console.log(latMarker + ', ' + lngMarker);
+		
+		const pinRandomMarker = new PinElement({
+  			scale: 0.5,
+			background: "blue",
+			borderColor: "black",
+			glyphColor: "black",
+  		});
+	
+		new AdvancedMarkerElement ({
+    		map: map,
+    		position: { lat: latMarker, lng: lngMarker },
+			draggable: false,
+			title: "Nr: " + iCount, //latMarker + ',' + lngMarker,
+			content: pinRandomMarker.element,
+  		});
+		
+	}
+	
+
+	
+
+	
+	/*
 	//Open popup window
     let boundsWin = window.open("about:blank", "Rectangle bounds", "width=400, height=400, left=300, top=200 , menubar=no, toolbar=no, location=no, status=no, resizable=no, scrollbars=no");
 	
@@ -101,6 +143,46 @@ async function showRectBounds(rect) {
 		+ '<br>West: ' + rect.bounds.getSouthWest().lng() 
 		+ '</div>'
     );
+	*/
 	
 
+}
+
+function getRandomLatBetween(southernLat, northernLat) {
+	if (southernLat  > northernLat) {
+		console.assert(!(southernLat  > northernLat), "SOUTHERN LAT MUST BE SMALLER THAN NORTHERN LAT!");
+		return 0;
+	}
+	
+	var latRange = Math.abs(northernLat - southernLat);
+	
+	var randomAddend = Math.random() * latRange;
+	
+	return southernLat + randomAddend;
+}
+
+function getRandomLngBetween(westernLng, easternLng) {
+	if (easternLng == westernLng) {
+		return 0;
+	} else if (easternLng > westernLng) { //If easternLng > westernLng, range overlaps 180th meridian
+		var lngRange = (180 - easternLng) + Math.abs(westernLng - (-180));
+		
+		var randomAddend = Math.random() * lngRange;
+		
+		if ((easternLng + randomAddend) == 180) {
+			return 180;
+		} else if ((easternLng + randomAddend) < 180) {
+			return easternLng + randomAddend;
+		} else if ((easternLng + randomAddend) > 180) {
+			return (-180 + ((easternLng + randomAddend) - 180));
+		} else {
+			console.log("Invalid calculation in getRandomLngBetween()!");
+		}
+	} else { //If easternLng < westernLng, range does not overlap 180th meridian
+		var lngRange = Math.abs(westernLng - easternLng);
+		
+		var randomAddend = Math.random() * lngRange;
+		
+		return easternLng + randomAddend;
+	}	
 }
