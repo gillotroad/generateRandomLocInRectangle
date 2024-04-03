@@ -122,30 +122,8 @@ async function generateRandomLocInRect(rect) {
 			draggable: false,
 			title: "Nr: " + iCount, //latMarker + ',' + lngMarker,
 			content: pinRandomMarker.element,
-  		});
-		
+  		});		
 	}
-	
-
-	
-
-	
-	/*
-	//Open popup window
-    let boundsWin = window.open("about:blank", "Rectangle bounds", "width=400, height=400, left=300, top=200 , menubar=no, toolbar=no, location=no, status=no, resizable=no, scrollbars=no");
-	
-	//Write rectangle bounds info topopup window
-    boundsWin.document.write(
-        '<div id=boundsWin><b style="color: blue">Rectangle bounds:</b><br><br>North: ' 
-		+ rect.bounds.getNorthEast().lat() 
-		+ '<br>East: ' + rect.bounds.getNorthEast().lng() 
-		+ '<br>South: ' + rect.bounds.getSouthWest().lat() 
-		+ '<br>West: ' + rect.bounds.getSouthWest().lng() 
-		+ '</div>'
-    );
-	*/
-	
-
 }
 
 function getRandomLatBetween(southernLat, northernLat) {
@@ -168,7 +146,8 @@ function getRandomLngBetween(westernLng, easternLng) {
 		var lngRange = (180 - easternLng) + Math.abs(westernLng - (-180));
 		
 		var randomAddend = Math.random() * lngRange;
-		
+
+		//Calculate new (random) longitude depending on whether given (westernLng, easternLng) range overlaps 180th meridian 
 		if ((easternLng + randomAddend) == 180) {
 			return 180;
 		} else if ((easternLng + randomAddend) < 180) {
