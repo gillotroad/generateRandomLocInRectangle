@@ -104,7 +104,7 @@ async function generateRandomLocInRect(rect) {
 	//Generate 100 random markers inside rectangle
 	for (let iCount = 0; iCount < 100; iCount++) {
 		latMarker = getRandomLatBetween(rect.bounds.getSouthWest().lat(), rect.bounds.getNorthEast().lat());
-		lngMarker = getRandomLngBetween(rect.bounds.getNorthEast().lng(), rect.bounds.getSouthWest().lng());
+		lngMarker = getRandomLngBetween(rect.bounds.getSouthWest().lng(), rect.bounds.getNorthEast().lng());
 		
 		console.log(iCount + ":");
 		console.log(latMarker + ', ' + lngMarker);
