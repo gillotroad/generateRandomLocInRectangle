@@ -142,26 +142,26 @@ function getRandomLatBetween(southernLat, northernLat) {
 function getRandomLngBetween(westernLng, easternLng) {
 	if (easternLng == westernLng) {
 		return 0;
-	} else if (easternLng > westernLng) { //If easternLng > westernLng, range overlaps 180th meridian
-		var lngRange = (180 - easternLng) + Math.abs(westernLng - (-180));
+	} else if (easternLng < westernLng) { //If easternLng < westernLng, range overlaps 180th meridian
+		var lngRange = (180 - westernLng) + Math.abs(easternLng - (-180));
 		
 		var randomAddend = Math.random() * lngRange;
 
 		//Calculate new (random) longitude depending on whether given (westernLng, easternLng) range overlaps 180th meridian 
-		if ((easternLng + randomAddend) == 180) {
+		if ((westernLng + randomAddend) == 180) {
 			return 180;
-		} else if ((easternLng + randomAddend) < 180) {
-			return easternLng + randomAddend;
-		} else if ((easternLng + randomAddend) > 180) {
-			return (-180 + ((easternLng + randomAddend) - 180));
+		} else if ((westernLng + randomAddend) < 180) {
+			return westernLng + randomAddend;
+		} else if ((westernLng + randomAddend) > 180) {
+			return (-180 + ((westernLng + randomAddend) - 180));
 		} else {
 			console.log("Invalid calculation in getRandomLngBetween()!");
 		}
-	} else { //If easternLng < westernLng, range does not overlap 180th meridian
-		var lngRange = Math.abs(westernLng - easternLng);
+	} else { //If easternLng > westernLng, range does not overlap 180th meridian
+		var lngRange = Math.abs(easternLng - westernLng);
 		
 		var randomAddend = Math.random() * lngRange;
 		
-		return easternLng + randomAddend;
+		return westernLng + randomAddend;
 	}	
 }
